@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mod16_assignment_api/utils/products_controller.dart';
+
+import '../widgets/product_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,6 +11,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  ProductsController productsController = ProductsController();
+
+  Future<void> fetchData() async{
+    await productsController.fetchProducts();
+    setState(() {
+
+    });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,41 +47,17 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 10),
             Expanded(
               child: GridView.builder(
-                itemCount: 20,
+                itemCount:productsController.products.length,
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: .7
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: .6
                 ),
                 itemBuilder: (context, index) {
-                  return SizedBox(
-                    height: 200,
-                    child: Card(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              children: [
-                                ClipRRect(
-                                  child: Image.network(
-                                    height: 160,
-                                    width: double.infinity,
-                                    fit: BoxFit.fill,
-                                    'https://t4.ftcdn.net/jpg/04/02/75/95/360_F_402759588_si9oFbEM4Tb60yHO5R2SfWrSLp2A5nYo.jpg',
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                Text('Hair Care Products '),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                  final product = productsController.products[index];
+                  return ProductCard(product: product,);
                 },
               ),
             ),
