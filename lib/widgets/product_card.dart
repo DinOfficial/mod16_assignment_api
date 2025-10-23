@@ -3,9 +3,11 @@ import 'package:mod16_assignment_api/models/products_model.dart';
 
 class ProductCard extends StatelessWidget {
   final Data product;
+  final VoidCallback onDelete;
   const ProductCard({
     super.key,
     required this.product,
+    required this.onDelete,
   });
 
   @override
@@ -46,8 +48,8 @@ class ProductCard extends StatelessWidget {
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ElevatedButton(onPressed: (){}, child: Icon(Icons.shopping_cart)),
-                        ElevatedButton(onPressed: (){}, child: Icon(Icons.edit))
+                        ElevatedButton(onPressed: (){}, child: Icon(Icons.edit)),
+                        ElevatedButton(onPressed: onDelete, child: Icon(Icons.delete, color: Colors.red,)),
                       ]
                   ),
                 ],

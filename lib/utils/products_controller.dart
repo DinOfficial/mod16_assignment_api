@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 class ProductsController{
   List<Data>products = [];
 
+  // fetch all product
   Future fetchProducts() async{
     final response = await http.get(Uri.parse(Urls.readProductUrl));
 
@@ -19,5 +20,16 @@ class ProductsController{
       products = model.data ?? [];
       print(products);
     }
+  }
+
+  // delete product by id
+  Future<bool> deleteProduct(String id) async {
+    final response = await http.get(Uri.parse(Urls.deleteProductUrl(id)));
+
+    if(response.statusCode == 200){
+      return true;
+    }
+    return false;
+
   }
 }

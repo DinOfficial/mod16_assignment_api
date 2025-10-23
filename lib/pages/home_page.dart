@@ -11,15 +11,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   ProductsController productsController = ProductsController();
 
-  Future<void> fetchData() async{
+  Future<void> fetchData() async {
     await productsController.fetchProducts();
     if (mounted) {
       setState(() {});
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -45,16 +45,34 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 10),
             Expanded(
               child: GridView.builder(
-                itemCount:productsController.products.length,
+                itemCount: productsController.products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 8,
                   mainAxisSpacing: 8,
-                  childAspectRatio: .6
+                  childAspectRatio: .6,
                 ),
                 itemBuilder: (context, index) {
                   final product = productsController.products[index];
-                  return ProductCard(product: product,);
+                  return ProductCard(
+                    product: product,
+                    onDelete: () {
+                      productsController.deleteProduct(product.sId.toString()).then((value) {
+                        if (value) {
+                          setState(() {
+                            productsController.products.removeWhere((item) => item.sId == product.sId);
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Product Deleted Successfully')),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Something Went Wrong')),
+                          );
+                        }
+                      });
+                    },
+                  );
                 },
               ),
             ),
