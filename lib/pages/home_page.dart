@@ -35,11 +35,21 @@ class _HomePageState extends State<HomePage> {
     int? totalPrice,
     required bool isUpdate,
   }) {
-    TextEditingController productNameController = TextEditingController();
-    TextEditingController productImageController = TextEditingController();
-    TextEditingController productQuantityController = TextEditingController();
-    TextEditingController productUnitPriceController = TextEditingController();
-    TextEditingController productTotalPriceController = TextEditingController();
+    TextEditingController productNameController = TextEditingController(
+      text: name != null ? name : '',
+    );
+    TextEditingController productImageController = TextEditingController(
+      text: image,
+    );
+    TextEditingController productQuantityController = TextEditingController(
+      text: quantity != null ? quantity.toString() : '',
+    );
+    TextEditingController productUnitPriceController = TextEditingController(
+      text: unitPrice != null ? unitPrice.toString() : '',
+    );
+    TextEditingController productTotalPriceController = TextEditingController(
+      text: totalPrice != null ? totalPrice.toString() : '',
+    );
 
     showDialog(
       context: context,
@@ -112,28 +122,43 @@ class _HomePageState extends State<HomePage> {
                 ),
                 SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: ()async {
-                    final result = await productsController.createProduct (
-                      productName: productNameController.text,
-                      productImg: productImageController.text,
-                      productQuantity: int.parse(
-                        productQuantityController.text,
-                      ),
-                      productUnitPrice: int.parse(
-                        productUnitPriceController.text,
-                      ),
-                      productTotalPrice: int.parse(
-                        productTotalPriceController.text,
-                      ),
-                    );
-                    if(result && mounted){
+                  onPressed: () async {
+                    isUpdate
+                        ? await productsController.updateProduct(
+                            productId: id,
+                            productName: productNameController.text,
+                            productImg: productImageController.text,
+                            productQuantity: int.parse(
+                              productQuantityController.text,
+                            ),
+                            productUnitPrice: int.parse(
+                              productUnitPriceController.text,
+                            ),
+                            productTotalPrice: int.parse(
+                              productTotalPriceController.text,
+                            ),
+                          )
+                        : await productsController.createProduct(
+                            productName: productNameController.text,
+                            productImg: productImageController.text,
+                            productQuantity: int.parse(
+                              productQuantityController.text,
+                            ),
+                            productUnitPrice: int.parse(
+                              productUnitPriceController.text,
+                            ),
+                            productTotalPrice: int.parse(
+                              productTotalPriceController.text,
+                            ),
+                          );
+                    if (mounted) {
                       await fetchData();
                     }
-                    if(mounted){
+                    if (mounted) {
                       Navigator.pop(context);
                     }
                   },
-                  child: Text('Save'),
+                  child: Text(isUpdate ? 'Update' : 'Create'),
                 ),
               ],
             ),
@@ -206,6 +231,17 @@ class _HomePageState extends State<HomePage> {
                               );
                             }
                           });
+                    },
+                    onEdit: () {
+                      createEditProductDialog(
+                        isUpdate: true,
+                        id: product.sId,
+                        name: product.productName,
+                        image: product.img,
+                        quantity: product.qty,
+                        unitPrice: product.unitPrice,
+                        totalPrice: product.totalPrice,
+                      );
                     },
                   );
                 },

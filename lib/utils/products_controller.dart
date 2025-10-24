@@ -23,6 +23,8 @@ class ProductsController {
     }
   }
 
+
+  // create product Controller
   Future<bool> createProduct(
       {
      String ? productName,
@@ -46,6 +48,40 @@ class ProductsController {
     );
     print(response.statusCode);
     print(response.body);
+
+    if (response.statusCode == 200)  {
+      await fetchProducts();
+      return true;
+    }
+    return false;
+  }
+
+  // update product by id
+  Future<bool> updateProduct(
+      {
+        String ? productId,
+        String ? productName,
+        String ? productImg,
+        int ? productQuantity,
+        int ? productUnitPrice,
+        int ? productTotalPrice,
+      }
+      ) async {
+    final response = await http.post(
+      Uri.parse(Urls.updateProductUrl(productId.toString())),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "ProductName": productName,
+        "ProductCode": DateTime.now().millisecondsSinceEpoch,
+        "Img": productImg,
+        "Qty": productQuantity,
+        "UnitPrice": productUnitPrice,
+        "TotalPrice": productTotalPrice,
+      }),
+    );
+    print(response.statusCode);
+    print(response.body);
+
     if (response.statusCode == 200)  {
       await fetchProducts();
       return true;

@@ -4,10 +4,14 @@ import 'package:mod16_assignment_api/models/products_model.dart';
 class ProductCard extends StatelessWidget {
   final Data product;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
+
+
   const ProductCard({
     super.key,
     required this.product,
     required this.onDelete,
+    required this.onEdit,
   });
 
   @override
@@ -48,7 +52,7 @@ class ProductCard extends StatelessWidget {
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ElevatedButton(onPressed: (){}, child: Icon(Icons.edit)),
+                        ElevatedButton(onPressed: onEdit, child: Icon(Icons.edit)),
                         ElevatedButton(onPressed: onDelete, child: Icon(Icons.delete, color: Colors.red,)),
                       ]
                   ),
