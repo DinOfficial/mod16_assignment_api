@@ -44,7 +44,10 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text( isUpdate? 'Update Product' : 'Create Product', style: TextStyle(fontSize: 16)),
+        title: Text(
+          isUpdate ? 'Update Product' : 'Create Product',
+          style: TextStyle(fontSize: 16),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -108,18 +111,46 @@ class _HomePageState extends State<HomePage> {
                   child: Text('Cancel'),
                 ),
                 SizedBox(width: 10),
-                ElevatedButton(onPressed: () {
-                  if(!isUpdate){
-                    ProductsController().createProduct(productName: productNameController.text, productImg: productImageController.text, productQuantity: int.parse(productQuantityController.text), productUnitPrice: int.parse(productUnitPriceController.text), productTotalPrice: int.parse(productTotalPriceController.text));
-                  }
-                  Navigator.pop(context);
-                }, child: Text('Save')),
+                ElevatedButton(
+                  onPressed: ()async {
+                    final result = await productsController.createProduct (
+                      productName: productNameController.text,
+                      productImg: productImageController.text,
+                      productQuantity: int.parse(
+                        productQuantityController.text,
+                      ),
+                      productUnitPrice: int.parse(
+                        productUnitPriceController.text,
+                      ),
+                      productTotalPrice: int.parse(
+                        productTotalPriceController.text,
+                      ),
+                    );
+                    if(result && mounted){
+                      await fetchData();
+                    }
+                    if(mounted){
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text('Save'),
+                ),
               ],
             ),
           ],
         ),
       ),
     );
+    dispose() {
+      productNameController.dispose();
+      productImageController.dispose();
+      productQuantityController.dispose();
+      productUnitPriceController.dispose();
+      productTotalPriceController.dispose();
+      super.dispose();
+    }
+
+    ;
   }
 
   @override
