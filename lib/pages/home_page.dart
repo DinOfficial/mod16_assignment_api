@@ -26,6 +26,102 @@ class _HomePageState extends State<HomePage> {
     fetchData();
   }
 
+  createEditProductDialog({
+    String? id,
+    String? name,
+    String? image,
+    int? quantity,
+    int? unitPrice,
+    int? totalPrice,
+    required bool isUpdate,
+  }) {
+    TextEditingController productNameController = TextEditingController();
+    TextEditingController productImageController = TextEditingController();
+    TextEditingController productQuantityController = TextEditingController();
+    TextEditingController productUnitPriceController = TextEditingController();
+    TextEditingController productTotalPriceController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text( isUpdate? 'Update Product' : 'Create Product', style: TextStyle(fontSize: 16)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: productNameController,
+              decoration: InputDecoration(
+                labelText: 'Product Name',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: productImageController,
+              decoration: InputDecoration(
+                labelText: 'Product Image',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: productQuantityController,
+              decoration: InputDecoration(
+                labelText: 'Product Quantity',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: productUnitPriceController,
+              decoration: InputDecoration(
+                labelText: 'Product Unit Price',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: productTotalPriceController,
+              decoration: InputDecoration(
+                labelText: 'Product Total Price',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('Cancel'),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(onPressed: () {
+                  if(!isUpdate){
+                    ProductsController().createProduct(productName: productNameController.text, productImg: productImageController.text, productQuantity: int.parse(productQuantityController.text), productUnitPrice: int.parse(productUnitPriceController.text), productTotalPrice: int.parse(productTotalPriceController.text));
+                  }
+                  Navigator.pop(context);
+                }, child: Text('Save')),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,20 +153,28 @@ class _HomePageState extends State<HomePage> {
                   return ProductCard(
                     product: product,
                     onDelete: () {
-                      productsController.deleteProduct(product.sId.toString()).then((value) {
-                        if (value) {
-                          setState(() {
-                            productsController.products.removeWhere((item) => item.sId == product.sId);
+                      productsController
+                          .deleteProduct(product.sId.toString())
+                          .then((value) {
+                            if (value) {
+                              setState(() {
+                                productsController.products.removeWhere(
+                                  (item) => item.sId == product.sId,
+                                );
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Product Deleted Successfully'),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Something Went Wrong'),
+                                ),
+                              );
+                            }
                           });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Product Deleted Successfully')),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Something Went Wrong')),
-                          );
-                        }
-                      });
                     },
                   );
                 },
@@ -78,6 +182,12 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          createEditProductDialog(isUpdate: false);
+        },
+        child: Icon(Icons.add, size: 30),
       ),
     );
   }
